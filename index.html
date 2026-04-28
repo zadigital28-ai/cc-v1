@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zadigital — Jasa Sosial Media</title>
+  <meta name="description" content="Layanan booster followers, views, likes terpercaya. Murah, lengkap dan berkualitas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg:#0a1645;--color-surface:#0d1f5c;--color-surface2:#112270;
+      --color-accent:#0eeef7;--color-secondary:#126bdd;--color-text:#0eeef7;
+      --color-text-muted:rgba(14,238,247,0.55);--color-text-body:rgba(255,255,255,0.85);
+      --color-border:rgba(14,238,247,0.15);--color-card:rgba(13,31,92,0.85);
+      --color-overlay:rgba(10,22,69,0.92);
+      --radius:14px;--radius-sm:8px;
+      --shadow:0 4px 32px rgba(0,0,0,0.35);--shadow-glow:0 0 24px rgba(14,238,247,0.18);
+      --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+      --font-display:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+    }
+    [data-theme="light"] {
+      --color-bg:#f0f4ff;--color-surface:#ffffff;--color-surface2:#e8eeff;
+      --color-accent:#126bdd;--color-secondary:#0a1645;--color-text:#0a1645;
+      --color-text-muted:rgba(10,22,69,0.5);--color-text-body:rgba(10,22,69,0.85);
+      --color-border:rgba(18,107,221,0.18);--color-card:rgba(255,255,255,0.9);
+      --color-overlay:rgba(240,244,255,0.95);
+      --shadow:0 4px 24px rgba(10,22,69,0.1);--shadow-glow:0 0 24px rgba(18,107,221,0.12);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--color-bg);color:var(--color-text-body);min-height:100vh;transition:background var(--transition),color var(--transition);overflow-x:hidden}
+    img{max-width:100%;display:block}
+    a{text-decoration:none;color:inherit}
+    button{cursor:pointer;border:none;background:none;font-family:inherit}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--color-bg)}
+    ::-webkit-scrollbar-thumb{background:var(--color-secondary);border-radius:3px}
+
+    /* LOADING */
+    #loading-screen{position:fixed;inset:0;z-index:9999;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity 0.5s ease,visibility 0.5s ease}
+    #loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .loading-logo{font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--color-accent);letter-spacing:-0.02em;animation:zpulse 1.5s ease-in-out infinite}
+    .loading-bar-track{width:200px;height:3px;background:var(--color-border);border-radius:2px;overflow:hidden}
+    .loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--color-secondary),var(--color-accent));border-radius:2px;animation:zloadbar 2s ease-in-out forwards}
+    .loading-dots{display:flex;gap:8px}
+    .loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--color-accent);animation:zbounce 1.2s ease-in-out infinite}
+    .loading-dots span:nth-child(2){animation-delay:0.2s}
+    .loading-dots span:nth-child(3){animation-delay:0.4s}
+    @keyframes zpulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    @keyframes zloadbar{0%{width:0}100%{width:100%}}
+    @keyframes zbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes zfadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes zshimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    @keyframes zscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    /* Testimoni marquee speed: increase seconds = slower */
+    /* Currently 70s per full loop. Edit the animation-duration below to adjust. */
+
+    /* POPUP */
+    #popup-overlay{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s}
+    #popup-overlay.active{opacity:1;visibility:visible}
+    .popup-box{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);max-width:480px;width:100%;overflow:hidden;transform:scale(0.9);transition:transform 0.3s;box-shadow:var(--shadow-glow)}
+    #popup-overlay.active .popup-box{transform:scale(1)}
+    .popup-img{width:100%;max-height:360px;object-fit:cover}
+    .popup-close-btn{width:100%;padding:14px;background:var(--color-accent);color:var(--color-bg);font-family:var(--font-display);font-weight:700;font-size:0.95rem;transition:opacity var(--transition)}
+    .popup-close-btn:hover{opacity:0.85}
+
+    /* NAVBAR */
+    #navbar{position:sticky;top:0;z-index:100;padding:0 24px;background:var(--color-overlay);backdrop-filter:blur(20px);border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;height:64px}
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .nav-logo{height:36px;width:auto;border-radius:6px}
+    .nav-logo-text{font-family:var(--font-display);font-size:1.3rem;font-weight:800;color:var(--color-accent);letter-spacing:-0.02em}
+    .nav-actions{display:flex;align-items:center;gap:12px}
+    .theme-toggle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text);font-size:1.1rem;transition:all var(--transition)}
+    .theme-toggle:hover{background:var(--color-surface2)}
+    /* Cart btn — desktop shows icon + text, mobile icon only */
+    .cart-btn{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:50px;background:var(--color-accent);color:var(--color-bg);font-family:var(--font-display);font-weight:700;font-size:0.85rem;transition:all var(--transition);position:relative}
+    .cart-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(14,238,247,0.35)}
+    .cart-btn-text{display:inline}
+    .cart-badge{background:#ff4757;color:#fff;font-size:0.7rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+    .cart-badge.hidden{display:none}
+
+    /* HERO */
+    #hero{position:relative;padding:80px 24px 60px;text-align:center;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(18,107,221,0.25) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 80% 100%,rgba(14,238,247,0.1) 0%,transparent 60%)}
+    .hero-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(var(--color-border) 1px,transparent 1px),linear-gradient(90deg,var(--color-border) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 80%)}
+    .hero-content{position:relative;z-index:1;max-width:680px;margin:0 auto}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;background:rgba(14,238,247,0.1);border:1px solid rgba(14,238,247,0.3);color:var(--color-accent);font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px}
+    .hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--color-accent);animation:zpulse 1.5s infinite}
+    .hero-title{font-family:var(--font-display);font-size:clamp(2rem,6vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-0.03em;color:var(--color-text);margin-bottom:16px}
+    .hero-title span{color:var(--color-text-body)}
+    .hero-subtitle{font-size:1.05rem;color:var(--color-text-muted);line-height:1.6;margin-bottom:32px}
+    .hero-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:50px;background:linear-gradient(135deg,var(--color-secondary),var(--color-accent));color:#fff;font-family:var(--font-display);font-weight:700;font-size:1rem;transition:all var(--transition);box-shadow:0 4px 24px rgba(14,238,247,0.25)}
+    .hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(14,238,247,0.4)}
+    /* Stats: always 1 row, no wrap */
+    .hero-stats{display:flex;justify-content:center;gap:0;margin-top:48px;flex-wrap:nowrap;width:100%}
+    .stat-item{text-align:center;flex:1;min-width:0;padding:0 8px}
+    .stat-num{font-family:var(--font-display);font-size:clamp(1.2rem,4vw,1.8rem);font-weight:800;color:var(--color-accent);white-space:nowrap}
+    .stat-label{font-size:clamp(0.65rem,2vw,0.78rem);color:var(--color-text-muted);margin-top:2px;white-space:nowrap}
+    .stat-divider{width:1px;background:var(--color-border);align-self:stretch;margin:4px 0}
+
+    /* SECTION */
+    .section{padding:64px 24px;max-width:1200px;margin:0 auto}
+    .section-title{font-family:var(--font-display);font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;color:var(--color-text);letter-spacing:-0.02em;margin-bottom:8px}
+    .section-sub{color:var(--color-text-muted);font-size:0.95rem;margin-bottom:40px}
+    .section-divider{width:48px;height:3px;background:linear-gradient(90deg,var(--color-secondary),var(--color-accent));border-radius:2px;margin-bottom:12px}
+
+    /* INFO */
+    #info{background:var(--color-surface);border-top:1px solid var(--color-border);border-bottom:1px solid var(--color-border)}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+    .info-body{color:var(--color-text-body);line-height:1.8;font-size:0.95rem}
+    .steps-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--color-text);margin-bottom:16px}
+    .steps-list{display:flex;flex-direction:column;gap:10px}
+    .step-item{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;background:var(--color-surface2);border:1px solid var(--color-border);border-radius:var(--radius-sm);transition:border-color var(--transition)}
+    .step-item:hover{border-color:var(--color-accent)}
+    .step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--color-secondary),var(--color-accent));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:0.8rem;color:#fff;flex-shrink:0}
+    .step-text{font-size:0.88rem;color:var(--color-text-body);padding-top:4px}
+
+    /* BONUS */
+    #bonus{border-top:1px solid var(--color-border)}
+    .bonus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .bonus-card{border-radius:var(--radius);overflow:hidden;border:1px solid var(--color-border);transition:all var(--transition)}
+    .bonus-card:hover{border-color:var(--color-accent);transform:translateY(-3px);box-shadow:var(--shadow-glow)}
+    .bonus-card img{width:100%;height:auto;object-fit:cover;display:block}
+
+    /* SERVICES */
+    #services{padding-top:48px}
+    .filter-wrap{margin-bottom:16px}
+    .filter-label{font-size:0.78rem;color:var(--color-text-muted);margin-bottom:8px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase}
+
+    /* Platform tabs — single row scrollable */
+    .platform-tabs-wrap{position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .platform-tabs{display:flex;gap:8px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;flex:1}
+    .platform-tabs::-webkit-scrollbar{display:none}
+    .platform-tab{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:50px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);font-size:0.82rem;font-weight:600;transition:all var(--transition);white-space:nowrap;flex-shrink:0}
+    .platform-tab-icon{width:16px;height:16px;flex-shrink:0;filter:invert(60%) sepia(10%) saturate(400%) hue-rotate(180deg)}
+    [data-theme="light"] .platform-tab-icon{filter:invert(20%) sepia(20%) saturate(400%) hue-rotate(200deg)}
+    .platform-tab.active .platform-tab-icon{filter:invert(10%) sepia(80%) saturate(800%) hue-rotate(200deg) brightness(0.3)}
+    .platform-tab:hover{border-color:var(--color-accent);color:var(--color-accent)}
+    .platform-tab.active{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-bg)}
+    .tab-scroll-btn{width:32px;height:32px;border-radius:50%;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;transition:all var(--transition)}
+    .tab-scroll-btn:hover{border-color:var(--color-accent);color:var(--color-accent)}
+
+    /* Search + sort */
+    .search-sort-row{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+    .search-box{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);transition:border-color var(--transition)}
+    .search-box:focus-within{border-color:var(--color-accent)}
+    .search-box svg{color:var(--color-text-muted);flex-shrink:0}
+    .search-box input{flex:1;background:none;border:none;outline:none;color:var(--color-text-body);font-family:var(--font-body);font-size:0.9rem}
+    .search-box input::placeholder{color:var(--color-text-muted)}
+    .sort-select{padding:10px 14px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);color:var(--color-text-body);font-family:var(--font-body);font-size:0.85rem;outline:none;cursor:pointer;transition:border-color var(--transition)}
+    .sort-select:focus{border-color:var(--color-accent)}
+    .sort-select option{background:var(--color-surface)}
+
+    /* Cards */
+    .services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+    .skeleton-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:20px;height:220px}
+    .skeleton-line{background:linear-gradient(90deg,var(--color-surface2) 25%,var(--color-border) 50%,var(--color-surface2) 75%);background-size:200% 100%;animation:zshimmer 1.5s infinite;border-radius:4px;margin-bottom:10px}
+    .service-card{background:var(--color-card);border:1px solid var(--color-border);border-radius:var(--radius);padding:20px;transition:all var(--transition);display:flex;flex-direction:column;gap:10px;animation:zfadeUp 0.4s ease both;backdrop-filter:blur(8px)}
+    .service-card:hover{border-color:rgba(14,238,247,0.35);transform:translateY(-2px);box-shadow:var(--shadow-glow)}
+    .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .card-platform{display:flex;align-items:center;gap:5px;font-size:0.72rem;color:var(--color-text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .card-platform-icon{width:13px;height:13px;flex-shrink:0;filter:invert(60%) sepia(10%) saturate(400%) hue-rotate(180deg);opacity:0.7}
+    [data-theme="light"] .card-platform-icon{filter:invert(20%) sepia(20%) saturate(400%) hue-rotate(200deg)}
+    .card-badges{display:flex;gap:4px;flex-wrap:wrap}
+    .badge{padding:3px 8px;border-radius:50px;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+    .badge-terlaris{background:rgba(14,238,247,0.15);color:var(--color-accent);border:1px solid rgba(14,238,247,0.3)}
+    .badge-promo{background:rgba(255,149,0,0.15);color:#ff9500;border:1px solid rgba(255,149,0,0.3)}
+    .badge-baru{background:rgba(52,199,89,0.15);color:#34c759;border:1px solid rgba(52,199,89,0.3)}
+    /* Name biggest, then price */
+    .card-name{font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--color-text-body);line-height:1.3}
+    .card-desc{font-size:0.8rem;color:var(--color-text-muted);line-height:1.5}
+    .card-price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto}
+    .card-price{font-family:var(--font-display);font-size:1.3rem;font-weight:800;color:var(--color-accent)}
+    .card-satuan{font-size:0.72rem;color:var(--color-text-muted);margin-top:2px}
+    .stok-badge{padding:3px 10px;border-radius:50px;font-size:0.68rem;font-weight:700}
+    .stok-tersedia{background:rgba(52,199,89,0.12);color:#34c759}
+    .stok-habis{background:rgba(255,59,48,0.12);color:#ff3b30}
+    .stok-segera{background:rgba(255,204,0,0.12);color:#ffc300}
+    .add-cart-btn{width:100%;padding:10px;background:linear-gradient(135deg,var(--color-secondary),var(--color-accent));color:#fff;border-radius:var(--radius-sm);font-family:var(--font-display);font-weight:700;font-size:0.85rem;transition:all var(--transition)}
+    .add-cart-btn:hover:not(:disabled){opacity:0.9;transform:translateY(-1px)}
+    .add-cart-btn:disabled{background:var(--color-surface2);color:var(--color-text-muted);cursor:not-allowed;transform:none}
+    .no-results{text-align:center;padding:48px 24px;color:var(--color-text-muted);font-size:0.95rem;grid-column:1/-1}
+    .pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:32px;flex-wrap:wrap}
+    .page-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);font-family:var(--font-display);font-weight:600;font-size:0.85rem;transition:all var(--transition);display:flex;align-items:center;justify-content:center}
+    .page-btn:hover{border-color:var(--color-accent);color:var(--color-accent)}
+    .page-btn.active{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-bg)}
+    .page-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+    /* TESTIMONI — auto-scroll marquee */
+    #testimoni{background:var(--color-surface);border-top:1px solid var(--color-border);overflow:hidden}
+    .testi-track-wrap{position:relative;overflow:hidden}
+    /* ↓ Ubah angka detik (70s) untuk mengatur kecepatan scroll: lebih besar = lebih lambat */
+    .testi-track{display:flex;gap:16px;width:max-content;animation:zscroll 70s linear infinite}
+    .testi-track.paused{animation-play-state:paused}
+    .testi-card{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius);padding:20px;width:300px;flex-shrink:0;transition:border-color var(--transition)}
+    .testi-card:hover{border-color:rgba(14,238,247,0.25)}
+    .testi-stars{color:#ffc300;font-size:0.9rem;margin-bottom:10px;letter-spacing:2px}
+    .testi-isi{font-size:0.88rem;color:var(--color-text-body);line-height:1.6;margin-bottom:14px;font-style:italic}
+    .testi-footer-row{display:flex;align-items:center;justify-content:space-between}
+    .testi-nama{font-family:var(--font-display);font-weight:700;font-size:0.88rem;color:var(--color-text)}
+    .testi-platform{font-size:0.75rem;color:var(--color-text-muted)}
+    /* Testimoni nav — always visible */
+    .testi-nav{display:flex;justify-content:center;gap:10px;margin-top:20px}
+    .testi-nav-btn{width:40px;height:40px;border-radius:50%;background:var(--color-surface2);border:1px solid var(--color-border);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all var(--transition)}
+    .testi-nav-btn:hover{border-color:var(--color-accent);color:var(--color-accent);background:var(--color-surface)}
+
+    /* CATATAN */
+    #catatan{border-top:1px solid var(--color-border)}
+    .catatan-box{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:28px 32px;line-height:1.8;font-size:0.9rem;color:var(--color-text-body)}
+
+    /* FOOTER */
+    #footer{background:var(--color-surface);border-top:1px solid var(--color-border);padding:40px 24px 24px}
+    .footer-inner{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:24px}
+    .footer-brand{display:flex;align-items:center;gap:10px}
+    .footer-logo{height:32px;border-radius:6px}
+    .footer-name{font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--color-accent)}
+    .footer-socials{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .social-link{width:40px;height:40px;border-radius:50%;background:var(--color-surface2);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);transition:all var(--transition);overflow:hidden}
+    .social-link:hover{border-color:var(--color-accent);transform:translateY(-2px)}
+    .social-link img{width:20px;height:20px;filter:invert(60%) sepia(10%) saturate(400%) hue-rotate(180deg);transition:filter var(--transition)}
+    .social-link:hover img{filter:invert(70%) sepia(60%) saturate(600%) hue-rotate(150deg)}
+    [data-theme="light"] .social-link img{filter:invert(20%) sepia(20%) saturate(400%) hue-rotate(200deg)}
+    /* WA icon gets green tint */
+    .social-link-wa img{filter:invert(55%) sepia(80%) saturate(400%) hue-rotate(90deg) brightness(0.9)}
+    .social-link-wa:hover{border-color:#25d366}
+    .social-link-wa:hover img{filter:invert(60%) sepia(90%) saturate(500%) hue-rotate(90deg)}
+    .footer-wa{display:flex;align-items:center;gap:10px;padding:10px 20px;border-radius:50px;background:#25d366;color:#fff;font-family:var(--font-display);font-weight:700;font-size:0.9rem;transition:all var(--transition)}
+    .footer-wa:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(37,211,102,0.4)}
+    .footer-copy{font-size:0.78rem;color:var(--color-text-muted);text-align:center}
+    /* Testimoni outer wrapper keeps nav outside scrollable area */
+    .testi-outer{display:flex;flex-direction:column;gap:0}
+
+    /* SCROLL TOP */
+    #scroll-top{position:fixed;bottom:24px;right:20px;z-index:200;width:40px;height:40px;border-radius:50%;background:var(--color-surface);border:1px solid var(--color-border);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all var(--transition);opacity:0;visibility:hidden}
+    #scroll-top.visible{opacity:1;visibility:visible}
+    #scroll-top:hover{border-color:var(--color-accent);color:var(--color-accent)}
+
+    /* CART */
+    #cart-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.6);opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s}
+    #cart-overlay.open{opacity:1;visibility:visible}
+    #cart-drawer{position:fixed;right:0;top:0;bottom:0;z-index:501;width:min(420px,100vw);background:var(--color-surface);border-left:1px solid var(--color-border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
+    #cart-drawer.open{transform:translateX(0)}
+    .cart-header{padding:20px 20px 16px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between}
+    .cart-title{font-family:var(--font-display);font-size:1.1rem;font-weight:800;color:var(--color-text)}
+    .cart-close{width:32px;height:32px;border-radius:50%;background:var(--color-surface2);color:var(--color-text-muted);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all var(--transition)}
+    .cart-close:hover{color:var(--color-text)}
+    .cart-items{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+    .cart-empty{text-align:center;padding:48px 0;color:var(--color-text-muted);font-size:0.9rem}
+    .cart-empty-icon{font-size:2.5rem;margin-bottom:12px}
+    .cart-item{background:var(--color-surface2);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px}
+    .cart-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+    .cart-item-name{font-size:0.85rem;font-weight:600;color:var(--color-text-body);line-height:1.3}
+    .cart-item-remove{color:var(--color-text-muted);font-size:1rem;transition:color var(--transition);flex-shrink:0}
+    .cart-item-remove:hover{color:#ff3b30}
+    .cart-item-bottom{display:flex;align-items:center;justify-content:space-between}
+    .qty-control{display:flex;align-items:center;gap:8px}
+    .qty-btn{width:26px;height:26px;border-radius:50%;background:var(--color-border);color:var(--color-text-body);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;transition:all var(--transition)}
+    .qty-btn:hover{background:var(--color-secondary);color:#fff}
+    .qty-num{font-family:var(--font-display);font-weight:700;font-size:0.9rem;color:var(--color-text);min-width:20px;text-align:center}
+    .cart-item-subtotal{font-family:var(--font-display);font-weight:700;font-size:0.95rem;color:var(--color-accent)}
+    .cart-footer{padding:16px 20px;border-top:1px solid var(--color-border)}
+    .cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .cart-total-label{font-size:0.85rem;color:var(--color-text-muted)}
+    .cart-total-amount{font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--color-accent)}
+    .order-wa-btn{width:100%;padding:14px;background:#25d366;color:#fff;border-radius:var(--radius-sm);font-family:var(--font-display);font-weight:700;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--transition)}
+    .order-wa-btn:hover{background:#20ba5a;transform:translateY(-1px)}
+    .clear-cart-btn{width:100%;padding:10px;color:var(--color-text-muted);font-size:0.82rem;margin-top:8px;transition:color var(--transition)}
+    .clear-cart-btn:hover{color:#ff3b30}
+
+    @media(max-width:768px){
+      .info-grid{grid-template-columns:1fr}
+      #navbar{padding:0 16px}
+      .section{padding:48px 16px}
+      #info .section{padding:48px 16px}
+      .cart-btn-text{display:none}
+      .cart-btn{padding:8px 12px}
+    }
+    @media(max-width:480px){
+      .services-grid{grid-template-columns:1fr}
+      .bonus-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo" id="loading-brand-name">Zadigital</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+  <div class="loading-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- POPUP -->
+<div id="popup-overlay">
+  <div class="popup-box">
+    <img id="popup-img" src="" alt="Promo" class="popup-img" />
+    <button class="popup-close-btn" onclick="closePopup()">Tutup &times;</button>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-brand">
+    <img id="nav-logo" class="nav-logo" src="" alt="Logo" style="display:none" loading="lazy" />
+    <span class="nav-logo-text" id="nav-brand-name">Zadigital</span>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle" title="Toggle tema">🌙</button>
+    <button class="cart-btn" onclick="openCart()">
+      <!-- Shopping basket icon (more basket-like) -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 3h2l2.5 9h11L20 7H7"/>
+        <circle cx="9" cy="20" r="1.5" fill="currentColor" stroke="none"/>
+        <circle cx="17" cy="20" r="1.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <span class="cart-btn-text">Keranjang</span>
+      <span class="cart-badge hidden" id="cart-badge">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ Layanan Sosial Media Terpercaya</div>
+    <h1 class="hero-title" id="hero-title">Solusi Digital <span>Terlengkap</span></h1>
+    <p class="hero-subtitle" id="hero-subtitle">Boost followers, views, likes & lebih — cepat, aman, harga terjangkau untuk semua platform.</p>
+    <a href="#services" class="hero-cta">
+      Lihat Layanan
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </a>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">10K+</div>
+        <div class="stat-label">Order Selesai</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Pelanggan Puas</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">99%</div>
+        <div class="stat-label">Berhasil</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INFO -->
+<section id="info">
+  <div class="section">
+    <div class="info-grid">
+      <div>
+        <div class="section-divider"></div>
+        <h2 class="section-title" id="info-title">Mengapa Zadigital?</h2>
+        <p class="info-body" id="info-body">Tingkatkan kredibilitas akun sosial media kamu dengan layanan booster berkualitas. Proses cepat, hasil nyata, harga bersaing.</p>
+      </div>
+      <div>
+        <div class="steps-title">🛒 Cara Order</div>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-text">Pilih layanan yang kamu butuhkan</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-text">Masukkan ke keranjang</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-text">Klik <strong>Pesan Sekarang</strong></div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-text">Kirim link akun / konten kamu via WhatsApp</div></div>
+          <div class="step-item"><div class="step-num">5</div><div class="step-text">Tunggu proses selesai</div></div>
+          <div class="step-item"><div class="step-num">6</div><div class="step-text">Jangan lupa klaim bonus! 🎁</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BONUS -->
+<section id="bonus" style="display:none">
+  <div class="section">
+    <div class="section-divider"></div>
+    <h2 class="section-title">Bonus & Promo</h2>
+    <p class="section-sub">Dapatkan bonus eksklusif untuk setiap order.</p>
+    <div class="bonus-grid" id="bonus-grid"></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section">
+    <div class="section-divider"></div>
+    <h2 class="section-title">Daftar Layanan</h2>
+    <p class="section-sub">Pilih layanan, tambah ke keranjang, order via WhatsApp.</p>
+
+    <div class="filter-wrap">
+      <div class="filter-label">Platform</div>
+      <div class="platform-tabs-wrap">
+        <button class="tab-scroll-btn" id="tab-scroll-left" onclick="scrollTabs(-1)">&#8592;</button>
+        <div class="platform-tabs" id="platform-tabs"></div>
+        <button class="tab-scroll-btn" id="tab-scroll-right" onclick="scrollTabs(1)">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="search-sort-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder="Cari layanan..." />
+      </div>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Urutan Default</option>
+        <option value="asc">Harga Termurah</option>
+        <option value="desc">Harga Termahal</option>
+      </select>
+    </div>
+    <div class="services-grid" id="services-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</section>
+
+<!-- TESTIMONI -->
+<section id="testimoni">
+  <div class="section">
+    <div class="section-divider"></div>
+    <h2 class="section-title">Apa Kata Mereka?</h2>
+    <p class="section-sub">Ribuan pelanggan sudah merasakan manfaatnya.</p>
+    <div class="testi-outer">
+      <div class="testi-track-wrap">
+        <div class="testi-track" id="testi-track"></div>
+      </div>
+      <div class="testi-nav">
+        <button class="testi-nav-btn" onclick="scrollTesti(-1)">&#8592;</button>
+        <button class="testi-nav-btn" onclick="scrollTesti(1)">&#8594;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATATAN -->
+<section id="catatan" style="display:none">
+  <div class="section">
+    <div class="section-divider"></div>
+    <h2 class="section-title">Catatan & Ketentuan</h2>
+    <div class="catatan-box" id="catatan-box"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img id="footer-logo" class="footer-logo" src="" alt="Logo" style="display:none" loading="lazy" />
+      <span class="footer-name" id="footer-brand-name">Zadigital</span>
+    </div>
+    <div class="footer-socials" id="footer-socials"></div>
+    <!-- WA icon now rendered inside footer-socials by JS -->
+    <a id="footer-wa" href="https://wa.me/6285385535252" style="display:none" aria-hidden="true"></a>
+    <p class="footer-copy" id="footer-copy">© 2025 Zadigital. All rights reserved.</p>
+  </div>
+</footer>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- CART -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-drawer">
+  <div class="cart-header">
+    <span class="cart-title">🛒 Keranjang</span>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amount" id="cart-total">Rp 0</span>
+    </div>
+    <button class="order-wa-btn" onclick="orderViaWA()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.558 4.14 1.535 5.878L.057 23.75a.5.5 0 00.61.636l6.054-1.43A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.93 0-3.74-.518-5.29-1.42l-.38-.224-3.935.929.972-3.846-.246-.397A9.938 9.938 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Pesan Sekarang via WhatsApp
+    </button>
+    <button class="clear-cart-btn" onclick="clearCart()">🗑 Kosongkan keranjang</button>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+// ------------------------------------------------------------
+// GANTI URL SPREADSHEET DI SINI
+// Cara mendapatkan URL:
+//   1. Buka Google Sheets → File → Share → Publish to web
+//   2. Pilih sheet yang diinginkan → format CSV → Publish
+//   3. Copy URL yang muncul, paste di bawah
+// ------------------------------------------------------------
+const CSV_BRANDING = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSAizylMKs6s8kFexM7WFO0Y4rhJRUfL8JZsUaCJTFXx0lTGP59wFAdJk0hqAqEfkgKR9fNazaF2D7M/pubhtml?gid=0&single=true';
+const CSV_DATA     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSAizylMKs6s8kFexM7WFO0Y4rhJRUfL8JZsUaCJTFXx0lTGP59wFAdJk0hqAqEfkgKR9fNazaF2D7M/pubhtml?gid=388669273&single=true';
+const CSV_TESTI    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSAizylMKs6s8kFexM7WFO0Y4rhJRUfL8JZsUaCJTFXx0lTGP59wFAdJk0hqAqEfkgKR9fNazaF2D7M/pub?gid=1350731658&single=true&output=csv';
+// ------------------------------------------------------------
+// CACHE: berapa menit data di-cache di browser sebelum fetch ulang
+// Ubah angka di bawah. Default 2 menit.
+// Set ke 0 untuk selalu fetch fresh (tidak direkomendasikan, lambat)
+// ------------------------------------------------------------
+const CACHE_MINUTES = 0; // 0 = selalu fetch fresh setiap refresh. Isi angka menit jika ingin cache.
+
+const WA_DEFAULT = '6285385535252';
+const PER_PAGE   = 20;
+
+// simple-icons CDN — nama platform di spreadsheet harus cocok dengan key di bawah (huruf kecil)
+const PLATFORM_ICONS = {
+  instagram:  'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/instagram.svg',
+  tiktok:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/tiktok.svg',
+  youtube:    'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/youtube.svg',
+  facebook:   'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/facebook.svg',
+  twitter:    'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/twitter.svg',
+  x:          'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/x.svg',
+  spotify:    'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/spotify.svg',
+  telegram:   'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/telegram.svg',
+  threads:    'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/threads.svg',
+  linkedin:   'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/linkedin.svg',
+  whatsapp:   'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/whatsapp.svg',
+  pinterest:  'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/pinterest.svg',
+  snapchat:   'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/snapchat.svg',
+  discord:    'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/discord.svg',
+  twitch:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/twitch.svg',
+  reddit:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/reddit.svg',
+  shopee:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/shopee.svg',
+  tokopedia:  'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/tokopedia.svg',
+  line:       'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/line.svg',
+  wechat:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/wechat.svg',
+  soundcloud: 'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/soundcloud.svg',
+  apple:      'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/apple.svg',
+  google:     'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/google.svg',
+};
+
+// Social links for footer — use real SVG icons
+const SOCIAL_DEFS = {
+  ig_url:      { icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/instagram.svg', label:'Instagram' },
+  tiktok_url:  { icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/tiktok.svg',    label:'TikTok' },
+  youtube_url: { icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/youtube.svg',   label:'YouTube' },
+  facebook_url:{ icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/facebook.svg',  label:'Facebook' },
+  twitter_url: { icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/x.svg',         label:'X/Twitter' },
+  telegram_url:{ icon:'https://cdn.jsdelivr.net/npm/simple-icons@9/icons/telegram.svg',  label:'Telegram' },
+};
+
+// ===== STATE =====
+let branding={}, allServices=[], filteredServices=[], cart=[];
+let currentPlatform='semua', currentPage=1, currentSort='default', searchQuery='';
+
+// ===== CSV =====
+function parseCSVLine(line){
+  const r=[];let c='';let q=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){q=!q}
+    else if(ch===','&&!q){r.push(c);c=''}
+    else{c+=ch}
+  }
+  r.push(c);return r;
+}
+function parseCSV(text){
+  const lines=text.trim().split(/\r?\n/);
+  if(lines.length<2)return[];
+  const headers=parseCSVLine(lines[0]).map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
+  const out=[];
+  for(let i=1;i<lines.length;i++){
+    const vals=parseCSVLine(lines[i]);
+    const obj={};
+    headers.forEach((h,idx)=>{obj[h]=(vals[idx]||'').trim()});
+    if(Object.values(obj).some(v=>v))out.push(obj);
+  }
+  return out;
+}
+async function fetchCSV(url,key){
+  // Time-based cache: expires after CACHE_MINUTES. Change CACHE_MINUTES above to control freshness.
+  if(CACHE_MINUTES>0){
+    try{
+      const raw=sessionStorage.getItem(key);
+      if(raw){const{ts,data}=JSON.parse(raw);if(Date.now()-ts<CACHE_MINUTES*60*1000)return data;}
+    }catch(e){}
+  }
+  // Fetch fresh data from Google Sheets CSV
+  const bust=Math.floor(Date.now()/((CACHE_MINUTES||1)*60000));
+  for(const u of[url+'&_cb='+bust,url]){
+    try{
+      const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;
+      const t=await r.text();
+      if(!t||t.trim().startsWith('<'))continue;
+      const d=parseCSV(t);
+      try{sessionStorage.setItem(key,JSON.stringify({ts:Date.now(),data:d}))}catch(e){}
+      return d;
+    }catch(e){console.warn('fetch fail',u,e.message)}
+  }
+  return[];
+}
+
+// ===== BRANDING =====
+function applyBranding(data){
+  // Store all keys lowercase for consistent lookup
+  data.forEach(r=>{
+    const k=(r.key||'').trim().toLowerCase();
+    const v=(r.value||'').trim();
+    if(k) branding[k]=v;
+  });
+  applyColors();
+
+  const name=branding.brand_name||'Zadigital';
+  document.title=name+' — Jasa Sosial Media';
+  setText('nav-brand-name',name);setText('footer-brand-name',name);setText('loading-brand-name',name);
+  if(branding.hero_title)    setText('hero-title',branding.hero_title);
+  if(branding.hero_subtitle) setText('hero-subtitle',branding.hero_subtitle);
+  if(branding.info_title)    setText('info-title',branding.info_title);
+  if(branding.info_body)     setText('info-body',branding.info_body);
+  if(branding.footer_text)   setText('footer-copy',branding.footer_text);
+
+  // Logo
+  if(branding.logo_url){
+    ['nav-logo','footer-logo'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.src=branding.logo_url;el.style.display='block';}
+    });
+  }
+
+  // WA number — update both footer link and cart order link
+  const waNum=branding.wa_number||WA_DEFAULT;
+  const waEl=document.getElementById('footer-wa');
+  if(waEl) waEl.href='https://wa.me/'+waNum;
+
+  // Popup promo — key: pop_up
+  if(branding.pop_up){
+    const overlay=document.getElementById('popup-overlay');
+    const img=document.getElementById('popup-img');
+    if(img&&overlay){
+      img.onload=()=>overlay.classList.add('active');
+      img.onerror=()=>{};
+      img.src=branding.pop_up;
+    }
+  }
+
+  // Catatan
+  if(branding.catatan){
+    const sec=document.getElementById('catatan');
+    const box=document.getElementById('catatan-box');
+    if(sec&&box){sec.style.display='';box.innerHTML=branding.catatan;}
+  }
+
+  // Bonus images — keys: bonus_1, bonus_2, bonus_3 (case-insensitive, stored lowercase)
+  const bonusUrls=['bonus_1','bonus_2','bonus_3'].map(k=>branding[k]).filter(Boolean);
+  if(bonusUrls.length){
+    const sec=document.getElementById('bonus');
+    const grid=document.getElementById('bonus-grid');
+    if(sec&&grid){
+      sec.style.display='';grid.innerHTML='';
+      bonusUrls.forEach(url=>{
+        const card=document.createElement('div');card.className='bonus-card';
+        const img=document.createElement('img');img.src=url;img.alt='Bonus';img.loading='lazy';
+        img.onerror=()=>card.remove();
+        card.appendChild(img);grid.appendChild(card);
+      });
+    }
+  }
+
+  // Footer socials — WA icon included here, regular footer-wa link hidden
+  const socialsEl=document.getElementById('footer-socials');
+  if(socialsEl){
+    socialsEl.innerHTML='';
+    // Add WA as icon button (always shown if wa_number exists)
+    const waNum2=branding.wa_number||WA_DEFAULT;
+    const waIcon=document.createElement('a');
+    waIcon.href='https://wa.me/'+waNum2;
+    waIcon.target='_blank';waIcon.rel='noopener';
+    waIcon.className='social-link social-link-wa';waIcon.title='WhatsApp';
+    const waImg=document.createElement('img');
+    waImg.src='https://cdn.jsdelivr.net/npm/simple-icons@9/icons/whatsapp.svg';
+    waImg.alt='WhatsApp';waImg.width=20;waImg.height=20;
+    waIcon.appendChild(waImg);socialsEl.appendChild(waIcon);
+
+    // Other social links from sheet
+    Object.entries(SOCIAL_DEFS).forEach(([key,info])=>{
+      if(branding[key]){
+        const a=document.createElement('a');
+        a.href=branding[key];a.target='_blank';a.rel='noopener';
+        a.className='social-link';a.title=info.label;
+        const img=document.createElement('img');
+        img.src=info.icon;img.alt=info.label;img.width=20;img.height=20;
+        a.appendChild(img);socialsEl.appendChild(a);
+      }
+    });
+  }
+}
+
+function applyColors(){
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  // Hanya set CSS var yang ada nilainya dari sheet.
+  // Jika kosong, CSS akan pakai nilai default dari :root di bagian atas file.
+  const set = (prop, val) => {
+    if (val && val.trim()) {
+      document.documentElement.style.setProperty(prop, val.trim());
+    } else {
+      document.documentElement.style.removeProperty(prop);
+    }
+  };
+
+  if (dark) {
+    // Warna dark mode dari sheet (key: color_dark_bg, color_dark_surface, dst)
+    set('--color-bg',        branding.color_dark_bg);
+    set('--color-surface',   branding.color_dark_surface);
+    set('--color-accent',    branding.color_dark_accent);
+    set('--color-secondary', branding.color_secondary);
+    set('--color-text',      branding.color_dark_text);
+    // color_default dipakai sebagai fallback bg jika color_dark_bg kosong
+    if (!branding.color_dark_bg && branding.color_default) {
+      set('--color-bg', branding.color_default);
+    }
+    // color_accent dipakai sebagai fallback text jika color_dark_text kosong
+    if (!branding.color_dark_text && branding.color_accent) {
+      set('--color-text', branding.color_accent);
+    }
+  } else {
+    // Warna light mode dari sheet (key: color_light_bg, color_light_surface, dst)
+    set('--color-bg',        branding.color_light_bg);
+    set('--color-surface',   branding.color_light_surface);
+    set('--color-accent',    branding.color_light_accent);
+    set('--color-secondary', branding.color_secondary);
+    set('--color-text',      branding.color_light_text);
+    // fallback
+    if (!branding.color_light_accent && branding.color_secondary) {
+      set('--color-accent', branding.color_secondary);
+    }
+  }
+}
+function setText(id,t){const e=document.getElementById(id);if(e)e.textContent=t}
+
+// ===== SERVICES =====
+function buildServices(data){
+  allServices=data.map((r,i)=>({
+    id:i,
+    nama:r.nama_layanan||'',
+    platform:r.platform||'',
+    jenis:r.jenis_layanan||'',
+    harga:parseInt((r.harga||'0').replace(/\D/g,''))||0,
+    satuan:r.satuan||'',
+    badge:r.badge||'',
+    stok:r.stok||'tersedia',
+    deskripsi:r.deskripsi||'',
+  })).filter(s=>s.nama);
+  buildPlatformTabs();
+  applyFilters();
+}
+
+function getPlatformOrder(){
+  const seen=new Set();const out=[];
+  allServices.forEach(s=>{
+    const p=s.platform.trim();
+    if(p&&!seen.has(p.toLowerCase())){seen.add(p.toLowerCase());out.push(p)}
+  });
+  return out;
+}
+
+function buildPlatformTabs(){
+  const container=document.getElementById('platform-tabs');
+  if(!container)return;
+  container.innerHTML='';
+
+  const mkBtn=(label,platform)=>{
+    const btn=document.createElement('button');
+    btn.className='platform-tab'+(platform==='semua'?' active':'');
+    btn.dataset.platform=platform;
+    btn.onclick=()=>setFilter(platform);
+
+    const iconUrl=platform!=='semua'?PLATFORM_ICONS[platform]:null;
+    if(iconUrl){
+      const img=document.createElement('img');
+      img.src=iconUrl;img.alt=label;img.className='platform-tab-icon';img.loading='lazy';
+      img.onerror=()=>img.remove();
+      btn.appendChild(img);
+    }
+    btn.appendChild(document.createTextNode(label));
+    return btn;
+  };
+
+  container.appendChild(mkBtn('Semua','semua'));
+  getPlatformOrder().forEach(p=>container.appendChild(mkBtn(p,p.toLowerCase())));
+}
+
+function scrollTabs(dir){
+  const el=document.getElementById('platform-tabs');
+  if(el)el.scrollBy({left:dir*150,behavior:'smooth'});
+}
+
+function setFilter(platform){
+  currentPlatform=platform;currentPage=1;
+  document.querySelectorAll('.platform-tab').forEach(b=>b.classList.toggle('active',b.dataset.platform===platform));
+  applyFilters();
+}
+
+function applyFilters(){
+  let list=[...allServices];
+  if(currentPlatform!=='semua')list=list.filter(s=>s.platform.toLowerCase()===currentPlatform);
+  if(searchQuery){
+    const q=searchQuery.toLowerCase();
+    list=list.filter(s=>s.nama.toLowerCase().includes(q)||s.jenis.toLowerCase().includes(q)||s.platform.toLowerCase().includes(q));
+  }
+  if(currentSort==='asc')list.sort((a,b)=>a.harga-b.harga);
+  else if(currentSort==='desc')list.sort((a,b)=>b.harga-a.harga);
+  else list.sort((a,b)=>{
+    const at=a.badge.toLowerCase()==='terlaris'?0:1;
+    const bt=b.badge.toLowerCase()==='terlaris'?0:1;
+    return at!==bt?at-bt:a.id-b.id;
+  });
+  filteredServices=list;
+  renderPage();
+}
+
+function renderPage(){
+  const grid=document.getElementById('services-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const total=filteredServices.length;
+  const totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>totalPages)currentPage=1;
+  const start=(currentPage-1)*PER_PAGE;
+  const slice=filteredServices.slice(start,start+PER_PAGE);
+
+  if(!slice.length){
+    grid.innerHTML='<div class="no-results">Tidak ada layanan ditemukan 🔍</div>';
+    document.getElementById('pagination').innerHTML='';
+    return;
+  }
+  slice.forEach((s,idx)=>grid.appendChild(buildCard(s,idx)));
+  buildPagination(totalPages);
+}
+
+function buildCard(s,idx){
+  const card=document.createElement('div');
+  card.className='service-card';
+  card.style.animationDelay=(idx*0.04)+'s';
+  const stok=s.stok.toLowerCase();
+  const stokClass=stok==='habis'?'stok-habis':stok==='segera'?'stok-segera':'stok-tersedia';
+  const stokLabel=stok==='habis'?'Habis':stok==='segera'?'Segera':'Tersedia';
+  const badgeMap={terlaris:'badge-terlaris',promo:'badge-promo',baru:'badge-baru'};
+  const badgeClass=badgeMap[s.badge.toLowerCase()]||'badge-terlaris';
+  const iconUrl=PLATFORM_ICONS[s.platform.toLowerCase()];
+
+  card.innerHTML=`
+    <div class="card-header">
+      <div class="card-platform">
+        ${iconUrl?`<img src="${iconUrl}" alt="${esc(s.platform)}" class="card-platform-icon" loading="lazy" onerror="this.remove()">`:''}
+        ${esc(s.platform)}
+      </div>
+      <div class="card-badges">
+        ${s.badge?`<span class="badge ${badgeClass}">${esc(s.badge)}</span>`:''}
+      </div>
+    </div>
+    <div class="card-name">${esc(s.nama)}</div>
+    ${s.deskripsi?`<div class="card-desc">${esc(s.deskripsi)}</div>`:''}
+    <div class="card-price-row">
+      <div>
+        <div class="card-price">${fmtRp(s.harga)}</div>
+        ${s.satuan?`<div class="card-satuan">per ${esc(s.satuan)}</div>`:''}
+      </div>
+      <span class="stok-badge ${stokClass}">${stokLabel}</span>
+    </div>
+    <button class="add-cart-btn" ${stok==='habis'?'disabled':''} onclick="addToCart(${s.id})">
+      ${stok==='habis'?'Stok Habis':'+ ke Keranjang'}
+    </button>
+  `;
+  return card;
+}
+
+function buildPagination(total){
+  const el=document.getElementById('pagination');
+  if(!el)return;
+  if(total<=1){el.innerHTML='';return}
+  el.innerHTML='';
+
+  const prev=document.createElement('button');
+  prev.className='page-btn';prev.textContent='←';prev.disabled=currentPage===1;
+  prev.onclick=()=>{currentPage--;renderPage();document.getElementById('services').scrollIntoView({behavior:'smooth',block:'start'})};
+  el.appendChild(prev);
+
+  let s=Math.max(1,currentPage-2),e=Math.min(total,s+4);
+  if(e-s<4)s=Math.max(1,e-4);
+  for(let i=s;i<=e;i++){
+    const btn=document.createElement('button');
+    btn.className='page-btn'+(i===currentPage?' active':'');
+    btn.textContent=i;
+    const pg=i;
+    btn.onclick=()=>{currentPage=pg;renderPage();document.getElementById('services').scrollIntoView({behavior:'smooth',block:'start'})};
+    el.appendChild(btn);
+  }
+
+  const next=document.createElement('button');
+  next.className='page-btn';next.textContent='→';next.disabled=currentPage===total;
+  next.onclick=()=>{currentPage++;renderPage();document.getElementById('services').scrollIntoView({behavior:'smooth',block:'start'})};
+  el.appendChild(next);
+}
+
+// ===== TESTIMONI — auto-scroll marquee =====
+function buildTestimoni(data){
+  const track=document.getElementById('testi-track');
+  if(!track)return;
+  track.innerHTML='';
+  const valid=data.filter(t=>t.nama||t.isi);
+  if(!valid.length)return;
+
+  // Build cards twice for seamless loop
+  const mkCard=t=>{
+    const stars=Math.min(5,Math.max(1,parseInt(t.bintang)||5));
+    const div=document.createElement('div');
+    div.className='testi-card';
+    div.innerHTML=`
+      <div class="testi-stars">${'★'.repeat(stars)}${'☆'.repeat(5-stars)}</div>
+      <div class="testi-isi">"${esc(t.isi)}"</div>
+      <div class="testi-footer-row">
+        <div class="testi-nama">${esc(t.nama)}</div>
+        <div class="testi-platform">${esc(t.platform_order||'')}</div>
+      </div>
+    `;
+    return div;
+  };
+
+  // Duplicate for seamless infinite scroll
+  valid.forEach(t=>track.appendChild(mkCard(t)));
+  valid.forEach(t=>track.appendChild(mkCard(t)));
+
+  // Pause on hover
+  const section=document.getElementById('testimoni');
+  section.addEventListener('mouseenter',()=>track.classList.add('paused'));
+  section.addEventListener('mouseleave',()=>track.classList.remove('paused'));
+}
+
+// Testimoni manual scroll — shifts CSS animation offset on the track
+function scrollTesti(dir){
+  const track=document.getElementById('testi-track');
+  if(!track)return;
+  // Get current animation offset via matrix transform
+  if(!window._testiManualOffset) window._testiManualOffset=0;
+  window._testiManualOffset+=dir*316;
+  // Apply as margin-left shift (negative shifts left/forward)
+  track.style.marginLeft=(-window._testiManualOffset)+'px';
+  track.style.transition='margin-left 0.4s ease';
+  setTimeout(()=>{track.style.transition=''},450);
+  // Pause then resume auto-scroll
+  track.classList.add('paused');
+  clearTimeout(window._testiResumeTimer);
+  window._testiResumeTimer=setTimeout(()=>{
+    // Reset manual offset to avoid drift
+    window._testiManualOffset=0;
+    track.style.marginLeft='';
+    track.classList.remove('paused');
+  },5000);
+}
+
+// ===== SKELETON =====
+function showSkeletons(){
+  const grid=document.getElementById('services-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  for(let i=0;i<6;i++){
+    const sk=document.createElement('div');sk.className='skeleton-card';
+    sk.innerHTML=`
+      <div class="skeleton-line" style="width:40%;height:10px;margin-bottom:16px"></div>
+      <div class="skeleton-line" style="width:80%;height:16px;margin-bottom:10px"></div>
+      <div class="skeleton-line" style="width:60%;height:10px;margin-bottom:20px"></div>
+      <div class="skeleton-line" style="width:50%;height:22px;margin-bottom:16px"></div>
+      <div class="skeleton-line" style="width:100%;height:36px"></div>
+    `;
+    grid.appendChild(sk);
+  }
+}
+
+// ===== CART =====
+function addToCart(id){
+  const svc=allServices.find(s=>s.id===id);if(!svc)return;
+  const ex=cart.find(c=>c.id===id);
+  if(ex)ex.qty++;else cart.push({...svc,qty:1});
+  updateCartUI();openCart();
+}
+function removeFromCart(id){cart=cart.filter(c=>c.id!==id);updateCartUI()}
+function changeQty(id,d){const it=cart.find(c=>c.id===id);if(it){it.qty=Math.max(1,it.qty+d);updateCartUI()}}
+function clearCart(){cart=[];updateCartUI()}
+
+function updateCartUI(){
+  const total=cart.reduce((s,c)=>s+c.qty,0);
+  const badge=document.getElementById('cart-badge');
+  if(badge){badge.textContent=total;badge.classList.toggle('hidden',total===0)}
+
+  const itemsEl=document.getElementById('cart-items');
+  const footerEl=document.getElementById('cart-footer');
+  const totalEl=document.getElementById('cart-total');
+  if(!itemsEl)return;
+
+  if(!cart.length){
+    itemsEl.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div>Keranjang masih kosong</div>';
+    if(footerEl)footerEl.style.display='none';
+    return;
+  }
+
+  itemsEl.innerHTML='';let grand=0;
+  cart.forEach(item=>{
+    const sub=item.harga*item.qty;grand+=sub;
+    const div=document.createElement('div');div.className='cart-item';
+    div.innerHTML=`
+      <div class="cart-item-top">
+        <div class="cart-item-name">${esc(item.nama)}</div>
+        <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕</button>
+      </div>
+      <div class="cart-item-bottom">
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+        </div>
+        <div class="cart-item-subtotal">${fmtRp(sub)}</div>
+      </div>
+    `;
+    itemsEl.appendChild(div);
+  });
+  if(totalEl)totalEl.textContent=fmtRp(grand);
+  if(footerEl)footerEl.style.display='';
+}
+
+function openCart(){document.getElementById('cart-overlay').classList.add('open');document.getElementById('cart-drawer').classList.add('open')}
+function closeCart(){document.getElementById('cart-overlay').classList.remove('open');document.getElementById('cart-drawer').classList.remove('open')}
+
+function orderViaWA(){
+  if(!cart.length)return;
+  const waNum=branding.wa_number||WA_DEFAULT;
+  const greeting=branding.wa_greeting||'Halo, saya ingin order:';
+  let msg=greeting+'\n\n';let total=0;
+  cart.forEach((it,i)=>{const sub=it.harga*it.qty;total+=sub;msg+=`${i+1}. ${it.nama} x${it.qty} = ${fmtRp(sub)}\n`});
+  msg+=`\nTotal: ${fmtRp(total)}\n\nMohon konfirmasi ketersediaan. Terima kasih!`;
+  window.open('https://wa.me/'+waNum+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ===== THEME =====
+function initTheme(){
+  const saved=localStorage.getItem('zd_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',saved);
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent=saved==='dark'?'🌙':'☀️';
+}
+document.getElementById('theme-toggle').addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('zd_theme',next);
+  document.getElementById('theme-toggle').textContent=next==='dark'?'🌙':'☀️';
+  if(Object.keys(branding).length)applyColors();
+});
+
+function closePopup(){document.getElementById('popup-overlay').classList.remove('active')}
+
+// ===== UTILS =====
+function fmtRp(n){return'Rp '+n.toLocaleString('id-ID')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scroll-top').classList.toggle('visible',window.scrollY>300);
+},{passive:true});
+
+document.getElementById('search-input').addEventListener('input',e=>{
+  searchQuery=e.target.value.trim();currentPage=1;applyFilters();
+});
+document.getElementById('sort-select').addEventListener('change',e=>{
+  currentSort=e.target.value;currentPage=1;applyFilters();
+});
+
+// ===== INIT =====
+async function init(){
+  initTheme();showSkeletons();updateCartUI();
+  try{
+    const[bData,sData,tData]=await Promise.all([
+      fetchCSV(CSV_BRANDING,'zd_branding'),
+      fetchCSV(CSV_DATA,'zd_data'),
+      fetchCSV(CSV_TESTI,'zd_testi'),
+    ]);
+    if(bData.length)applyBranding(bData);
+    if(sData.length)buildServices(sData);
+    else document.getElementById('services-grid').innerHTML='<div class="no-results">Gagal memuat data. Pastikan sheet sudah di-publish.</div>';
+    if(tData.length)buildTestimoni(tData);
+  }catch(e){console.error('init error',e)}
+  setTimeout(()=>document.getElementById('loading-screen').classList.add('hidden'),2000);
+}
+init();
+</script>
+</body>
+</html>
