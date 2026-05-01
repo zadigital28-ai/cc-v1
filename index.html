@@ -569,27 +569,47 @@ function parseCSV(text){
   }
   return out;
 }
-async function fetchCSV(url,key){
-  // Time-based cache: expires after CACHE_MINUTES. Change CACHE_MINUTES above to control freshness.
-  if(CACHE_MINUTES>0){
-    try{
-      const raw=sessionStorage.getItem(key);
-      if(raw){const{ts,data}=JSON.parse(raw);if(Date.now()-ts<CACHE_MINUTES*60*1000)return data;}
-    }catch(e){}
+async function fetchCSV(url, key){
+  // Check time-based cache
+  if (CACHE_MINUTES > 0) {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (raw) {
+        const {ts, data} = JSON.parse(raw);
+        if (Date.now() - ts < CACHE_MINUTES * 60 * 1000) return data;
+      }
+    } catch(e) {}
   }
-  // Fetch fresh data from Google Sheets CSV
-  const bust=Math.floor(Date.now()/((CACHE_MINUTES||1)*60000));
-  for(const u of[url+'&_cb='+bust,url]){
-    try{
-      const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;
-      const t=await r.text();
-      if(!t||t.trim().startsWith('<'))continue;
-      const d=parseCSV(t);
-      try{sessionStorage.setItem(key,JSON.stringify({ts:Date.now(),data:d}))}catch(e){}
-      return d;
-    }catch(e){console.warn('fetch fail',u,e.message)}
+
+  // Fetch with 8s timeout to prevent hanging
+  const fetchWithTimeout = async (u) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    try {
+      const r = await fetch(u, {cache: 'no-store', signal: controller.signal});
+      clearTimeout(timer);
+      return r;
+    } catch(e) {
+      clearTimeout(timer);
+      throw e;
+    }
+  };
+
+  const urls = [url + '&_cb=' + Date.now(), url];
+  for (const u of urls) {
+    try {
+      const r = await fetchWithTimeout(u);
+      if (!r.ok) continue;
+      const text = await r.text();
+      if (!text || text.trim().startsWith('<')) continue;
+      const data = parseCSV(text);
+      try { sessionStorage.setItem(key, JSON.stringify({ts: Date.now(), data})); } catch(e) {}
+      return data;
+    } catch(e) {
+      console.warn('fetch failed:', key, e.message);
+    }
   }
-  return[];
+  return [];
 }
 
 // ===== BRANDING =====
@@ -1110,26 +1130,52 @@ document.getElementById('sort-select').addEventListener('change',e=>{
 });
 
 // ===== INIT =====
+function hideLoading(){
+  const el=document.getElementById('loading-screen');
+  if(el) el.classList.add('hidden');
+}
+
 async function init(){
   initTheme();
-  // Apply last-known colors from localStorage so loading screen already correct
+  // Apply last-known colors from localStorage so loading screen already shows correct colors
   try {
     const saved = localStorage.getItem('zd_branding_colors');
-    if (saved) { branding = JSON.parse(saved); applyColors(); }
+    if (saved) { Object.assign(branding, JSON.parse(saved)); applyColors(); }
   } catch(e) {}
-  showSkeletons();updateCartUI();
-  try{
-    const[bData,sData,tData]=await Promise.all([
-      fetchCSV(CSV_BRANDING,'zd_branding'),
-      fetchCSV(CSV_DATA,'zd_data'),
-      fetchCSV(CSV_TESTI,'zd_testi'),
+
+  showSkeletons();
+  updateCartUI();
+
+  // Safety: hide loading after max 5s regardless of fetch result
+  const safetyTimer = setTimeout(hideLoading, 5000);
+
+  try {
+    const [bData, sData, tData] = await Promise.all([
+      fetchCSV(CSV_BRANDING, 'zd_branding'),
+      fetchCSV(CSV_DATA,     'zd_data'),
+      fetchCSV(CSV_TESTI,    'zd_testi'),
     ]);
-    if(bData.length)applyBranding(bData);
-    if(sData.length)buildServices(sData);
-    else document.getElementById('services-grid').innerHTML='<div class="no-results">Gagal memuat data. Pastikan sheet sudah di-publish.</div>';
-    if(tData.length)buildTestimoni(tData);
-  }catch(e){console.error('init error',e)}
-  setTimeout(()=>document.getElementById('loading-screen').classList.add('hidden'),2000);
+
+    if (bData && bData.length) applyBranding(bData);
+
+    if (sData && sData.length) {
+      buildServices(sData);
+    } else {
+      const g = document.getElementById('services-grid');
+      if (g) g.innerHTML = '<div class="no-results">Gagal memuat data layanan. Pastikan sheet sudah di-publish ke web (File → Share → Publish to web).</div>';
+    }
+
+    if (tData && tData.length) buildTestimoni(tData);
+
+  } catch(e) {
+    console.error('Init error:', e);
+    const g = document.getElementById('services-grid');
+    if (g) g.innerHTML = '<div class="no-results">Terjadi kesalahan saat memuat data.</div>';
+  } finally {
+    // Always hide loading — never stuck
+    clearTimeout(safetyTimer);
+    setTimeout(hideLoading, 400);
+  }
 }
 init();
 </script>
