@@ -689,43 +689,87 @@ function applyBranding(data){
 
 function applyColors(){
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  // Hanya set CSS var yang ada nilainya dari sheet.
-  // Jika kosong, CSS akan pakai nilai default dari :root di bagian atas file.
+  const root = document.documentElement;
+
+  // Set semua CSS var langsung dari sheet — termasuk loading screen dan animasi
+  // karena semua element pakai var() yang sama.
+  // Jika key kosong di sheet, var tetap pakai nilai default dari :root CSS.
   const set = (prop, val) => {
-    if (val && val.trim()) {
-      document.documentElement.style.setProperty(prop, val.trim());
-    } else {
-      document.documentElement.style.removeProperty(prop);
-    }
+    if (val && val.trim()) root.style.setProperty(prop, val.trim());
+    else root.style.removeProperty(prop);
   };
 
+  // --- Warna universal (dark & light) ---
+  set('--color-secondary', branding.color_secondary);
+
   if (dark) {
-    // Warna dark mode dari sheet (key: color_dark_bg, color_dark_surface, dst)
-    set('--color-bg',        branding.color_dark_bg);
-    set('--color-surface',   branding.color_dark_surface);
-    set('--color-accent',    branding.color_dark_accent);
-    set('--color-secondary', branding.color_secondary);
-    set('--color-text',      branding.color_dark_text);
-    // color_default dipakai sebagai fallback bg jika color_dark_bg kosong
-    if (!branding.color_dark_bg && branding.color_default) {
-      set('--color-bg', branding.color_default);
+    // Urutan prioritas: key spesifik dark → color_default sebagai fallback bg
+    set('--color-bg',      branding.color_dark_bg      || branding.color_default);
+    set('--color-surface', branding.color_dark_surface || branding.color_default);
+    set('--color-surface2',branding.color_dark_surface || branding.color_default);
+    set('--color-accent',  branding.color_dark_accent  || branding.color_accent);
+    set('--color-text',    branding.color_dark_text    || branding.color_accent);
+
+    // Derived vars — pakai color_accent sebagai basis muted/border/overlay/card
+    const acc = branding.color_dark_accent || branding.color_accent;
+    const bg  = branding.color_dark_bg     || branding.color_default;
+    if (acc) {
+      // Parse hex ke rgb untuk rgba()
+      const rgb = hexToRgb(acc);
+      if (rgb) {
+        root.style.setProperty('--color-text-muted',  `rgba(${rgb},0.55)`);
+        root.style.setProperty('--color-border',       `rgba(${rgb},0.15)`);
+        root.style.setProperty('--shadow-glow',        `0 0 24px rgba(${rgb},0.18)`);
+      }
     }
-    // color_accent dipakai sebagai fallback text jika color_dark_text kosong
-    if (!branding.color_dark_text && branding.color_accent) {
-      set('--color-text', branding.color_accent);
+    if (bg) {
+      const rgb = hexToRgb(bg);
+      if (rgb) root.style.setProperty('--color-overlay', `rgba(${rgb},0.92)`);
     }
   } else {
-    // Warna light mode dari sheet (key: color_light_bg, color_light_surface, dst)
-    set('--color-bg',        branding.color_light_bg);
-    set('--color-surface',   branding.color_light_surface);
-    set('--color-accent',    branding.color_light_accent);
-    set('--color-secondary', branding.color_secondary);
-    set('--color-text',      branding.color_light_text);
-    // fallback
-    if (!branding.color_light_accent && branding.color_secondary) {
-      set('--color-accent', branding.color_secondary);
+    set('--color-bg',      branding.color_light_bg      || '#f0f4ff');
+    set('--color-surface', branding.color_light_surface || '#ffffff');
+    set('--color-surface2',branding.color_light_surface || '#e8eeff');
+    set('--color-accent',  branding.color_light_accent  || branding.color_secondary);
+    set('--color-text',    branding.color_light_text    || branding.color_default);
+
+    const acc = branding.color_light_accent || branding.color_secondary;
+    const bg  = branding.color_light_bg;
+    if (acc) {
+      const rgb = hexToRgb(acc);
+      if (rgb) {
+        root.style.setProperty('--color-text-muted', `rgba(${rgb},0.5)`);
+        root.style.setProperty('--color-border',      `rgba(${rgb},0.18)`);
+        root.style.setProperty('--shadow-glow',       `0 0 24px rgba(${rgb},0.12)`);
+      }
+    }
+    if (bg) {
+      const rgb = hexToRgb(bg);
+      if (rgb) root.style.setProperty('--color-overlay', `rgba(${rgb},0.95)`);
     }
   }
+}
+
+// Helper: "#0eeef7" → "14,238,247"
+function hexToRgb(hex) {
+  if (!hex) return null;
+  const clean = hex.replace('#','');
+  if (clean.length !== 6) return null;
+  const r = parseInt(clean.slice(0,2),16);
+  const g = parseInt(clean.slice(2,4),16);
+  const b = parseInt(clean.slice(4,6),16);
+  if (isNaN(r)||isNaN(g)||isNaN(b)) return null;
+  return `${r},${g},${b}`;
+}
+  // Save branding colors to localStorage so next load uses correct colors immediately
+  try {
+    const colorKeys = ['color_default','color_accent','color_secondary',
+      'color_dark_bg','color_dark_surface','color_dark_text','color_dark_accent',
+      'color_light_bg','color_light_surface','color_light_text','color_light_accent'];
+    const colorData = {};
+    colorKeys.forEach(k => { if(branding[k]) colorData[k] = branding[k]; });
+    localStorage.setItem('zd_branding_colors', JSON.stringify(colorData));
+  } catch(e) {}
 }
 function setText(id,t){const e=document.getElementById(id);if(e)e.textContent=t}
 
@@ -1067,7 +1111,13 @@ document.getElementById('sort-select').addEventListener('change',e=>{
 
 // ===== INIT =====
 async function init(){
-  initTheme();showSkeletons();updateCartUI();
+  initTheme();
+  // Apply last-known colors from localStorage so loading screen already correct
+  try {
+    const saved = localStorage.getItem('zd_branding_colors');
+    if (saved) { branding = JSON.parse(saved); applyColors(); }
+  } catch(e) {}
+  showSkeletons();updateCartUI();
   try{
     const[bData,sData,tData]=await Promise.all([
       fetchCSV(CSV_BRANDING,'zd_branding'),
