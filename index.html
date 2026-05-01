@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jasa Sosial Media</title>
+  <title>Zadigital — Jasa Sosial Media</title>
   <meta name="description" content="Layanan booster followers, views, likes terpercaya. Murah, lengkap dan berkualitas." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -705,6 +705,7 @@ function applyBranding(data){
       }
     });
   }
+  saveBrandingColors();
 }
 
 function applyColors(){
@@ -781,7 +782,8 @@ function hexToRgb(hex) {
   if (isNaN(r)||isNaN(g)||isNaN(b)) return null;
   return `${r},${g},${b}`;
 }
-  // Save branding colors to localStorage so next load uses correct colors immediately
+
+function saveBrandingColors(){
   try {
     const colorKeys = ['color_default','color_accent','color_secondary',
       'color_dark_bg','color_dark_surface','color_dark_text','color_dark_accent',
