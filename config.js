@@ -3,4 +3,4 @@
  * CONFIG — Ganti URL ini saat deploy untuk klien baru
  * ============================================================
  */
-window.GAS_URL = 'https://script.google.com/macros/s/AKfycby4gVpMRj0rY2lpQUKAQoZypY0JgD_Xw9Ap4-E7FCUl8gYHk1FjaTSFgXBiGl8FKYEZRQ/exec';
+window.GAS_URL = 'https://script.google.com/macros/s/AKfycbxpbQoIz71-LkMlKjDi9k7rKID8rnZNo7TpGL1HagiU_b4mTWQQ0z9o-w9VUUCxfKey/exec';
